@@ -25,7 +25,12 @@ except socket.error, msg:
 
 print 'Socket bind complete'
 
+d = s.recvfrom(1024)
+username = d[0]
+d = s.recvfrom(1024)
+password = d[0]
 
+print 'username: ' + username + ' password: ' + password
 
 #now keep talking with the client
 while 1:
