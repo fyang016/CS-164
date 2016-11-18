@@ -31,7 +31,7 @@ vee = 0
 
 flip = 0
 
-print 'Please enter your messages + Press Enter'
+print 'Please input your message and then press the Enter key: '
 while 1:
     timeout = 5
     readable, writable, exceptional = select.select(inputs, outputs, inputs, timeout)
@@ -63,46 +63,17 @@ while 1:
     
     for x in readable:
 		if x is sys.stdin:
-			# messageText=sys.stdin.readline()
-			# messageText=messageText.strip()
-			
-			# stringList.append(messageText)
-			
-			
-			# print 'Displaying stored string: '
-			# print stringList[:len(stringList)]
-			
-			# if messageText == 'EXIT' or messageText == 'exit' or messageText == 'Exit':
-			#     print 'Closing...'
-				
-			#     s.close()
-			#     sys.exit()
-			# else:
-				
-			# 	# pkt2 is lost (not sent at all in this case)
-			# 	if packetIndex == 2:
-			# 		lossIndex = 2
-			# 		lossBool = 1
-			# 		packetIndex = packetIndex + 1
-					
-			# 		continue
-				
-			# 	print 'Sending Packet... '
-			# 	messageText= '0 | ' + ip_checksum(messageText) + ' | ' + messageText + ' | ' + str(packetIndex)
-			# 	s.sendto(messageText,(host, port))
-				
-			# 	packetIndex = packetIndex + 1
 			
 			vee = u
 			for u in range (vee,4):
-				print 'u is ' + str(u) + ' and vee is ' + str(vee)
+				# print 'u is ' + str(u) + ' and vee is ' + str(vee)
 				
 				
 				if (packetIndex < len(stringList)):
 					# print 'messageText = stringList[packetIndex]'
 					messageText = stringList[packetIndex]
 				else:
-					print 'messageText=sys.stdin.readline()'
+					# print 'messageText=sys.stdin.readline()'
 					messageText=sys.stdin.readline()
 					messageText=messageText.strip()
 					
