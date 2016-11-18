@@ -1,143 +1,162 @@
-#'''
-#    udp socket client
-#'''
-
-import random
+import os
 import select
-import socket   #for sockets
-import sys  #for exit
+import socket
+import sys
 import time
-from socket import timeout
 from check import ip_checksum
 
-# create dgram udp socket
+
 try:
-    s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+	s=socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
 except socket.error:
-    print 'Failed to create socket'
-    sys.exit()
- 
-host = 'localhost';
-port = 8888;
+	print 'Failed to create socket'
+	sys.exit()
 
-packetStatus = 0
+host='localhost'
+port=8888
+inputs = [sys.stdin, s]
+outputs = [ ]
+exceptional = [s]
 
-begin = 0
-end = 3
+stringList = [ ]
 
-packetCount = 0
+packetNumbers = [ ]
+packetIndex = 0
 
-former = 0
+lossBool = 0
+lossIndex = 0
 
-wordList = []
+u = 0
+vee = 0
 
-testVariable = 0
+flip = 0
 
-
-while(1) :
+print 'Please enter your messages + Press Enter'
+while 1:
+    timeout = 5
+    readable, writable, exceptional = select.select(inputs, outputs, inputs, timeout)
     
+    # timeout part of go back n
+    if not (readable or writable or exceptional):
+        # print ' timed out, do some other work here'
+        
+        if lossBool == 1:
+        	print 'reverting to lost packet and re-sending...'
+        	packetIndex = lossIndex
+        	
+        	if (lossIndex + 4 > len(stringList)):
+        		maxNum = len(stringList)
+        	else:
+        		maxNum = lossIndex + 4
+        	for t in range(lossIndex, maxNum):
+        		# print 't is ' + str(t)
+        		messageText = stringList[t]
+	        	messageText= '0 | ' + ip_checksum(messageText) + ' | ' + messageText + ' | ' + str(packetIndex)
+	        	
+	        	# print 'MessageText: ' + messageText
+	        	s.sendto(messageText,(host, port))
+	        	packetIndex = packetIndex + 1
+        	
+        	lossBool = 0
+        	
+        continue
     
-    try :
-        print 'x, begin ' + str(begin) + ', end ' + str(end)
-        for x in range(begin,end + 1):
-            
-            msg = raw_input('Enter message to send : ')
-            
-            wordList.append(msg)
-            
-            #start the timer for timeout
-            s.settimeout(10)
-            
-            # compute checksum of the message
-            checksum = ip_checksum(msg)
-            
-            # making sure checksum is corrupted only once
-            if testVariable == 2:
-                checksum = 'ee'
-            else:
-                checksum = ip_checksum(msg)
-            testVariable = testVariable + 1
-        
-            #Set the whole string
-            s.sendto(str(packetStatus) + msg + checksum, (host, port))
-            packetCount = packetCount + 1
-            
-            print 'packetStatus ' + str(packetStatus)
-            packetStatus = packetStatus + 1
-            
-        print 'Sleeping for five seconds...'
-        time.sleep(5)
-        
-        
-        
-        
-        try:
-            print 'y, begin ' + str(begin) + ', end ' + str(end)
-            for y in range(0,4):
-                # receive data from client (data, addr)
-                d = s.recvfrom(1024)
-                reply = d[0]
-                addr = d[1]
-                
-                
-                begin = int(reply[0])
-                end = begin + 3
-                
-                print 'reply[0]: ' + reply[0] + ', y: ' + str(y)
-                if (former != reply[0]) or (reply[0] == 0):
-                    print 'Server reply : ' + reply
-                    
-                    
-                    msg = raw_input('Enter message to send : ')
-                    wordList.append(msg)
-                    
-                    
-                    #start the timer for timeout
-                    s.settimeout(10)
-                    
-                    # compute checksum of the message
-                    checksum = ip_checksum(msg)
-                    
-                    # making sure checksum is corrupted only once
-                    if testVariable == 2:
-                        checksum = 'ee'
-                    else:
-                        checksum = ip_checksum(msg)
-                    testVariable = testVariable + 1
-                
-                    #Set the whole string
-                    s.sendto(str(packetStatus) + msg + checksum, (host, port))
-                    
-                    print 'packetStatus ' + str(packetStatus)
-                    packetStatus = packetStatus + 1
-                    
-                    
-                    former = reply[0]
-                
-                
-                
-                
-                
-                
-                
-                
-        except socket.timeout:
-            print 'Re-sending from packet ... ' + str(begin) + ' with end ' + str(end)
-            
-            for h in range(0, begin):
-                checksum = ip_checksum(msg)
-                
-                s.sendto(str(packetStatus) + msg + checksum, (host, port))
-                
-                d = s.recvfrom(1024)
-                reply = d[0]
-                addr = d[1]
-        
-        
-        
-        
-        
-        
-    except socket.error, msg:
-        print 'Error Code : ' + str(msg[0]) + ' Message ' + msg[1]
-        sys.exit()
+    for x in readable:
+		if x is sys.stdin:
+			# messageText=sys.stdin.readline()
+			# messageText=messageText.strip()
+			
+			# stringList.append(messageText)
+			
+			
+			# print 'Displaying stored string: '
+			# print stringList[:len(stringList)]
+			
+			# if messageText == 'EXIT' or messageText == 'exit' or messageText == 'Exit':
+			#     print 'Closing...'
+				
+			#     s.close()
+			#     sys.exit()
+			# else:
+				
+			# 	# pkt2 is lost (not sent at all in this case)
+			# 	if packetIndex == 2:
+			# 		lossIndex = 2
+			# 		lossBool = 1
+			# 		packetIndex = packetIndex + 1
+					
+			# 		continue
+				
+			# 	print 'Sending Packet... '
+			# 	messageText= '0 | ' + ip_checksum(messageText) + ' | ' + messageText + ' | ' + str(packetIndex)
+			# 	s.sendto(messageText,(host, port))
+				
+			# 	packetIndex = packetIndex + 1
+			
+			vee = u
+			for u in range (vee,4):
+				print 'u is ' + str(u) + ' and vee is ' + str(vee)
+				
+				
+				if (packetIndex < len(stringList)):
+					# print 'messageText = stringList[packetIndex]'
+					messageText = stringList[packetIndex]
+				else:
+					print 'messageText=sys.stdin.readline()'
+					messageText=sys.stdin.readline()
+					messageText=messageText.strip()
+					
+					stringList.append(messageText)
+				
+				
+				print 'Displaying stored strings: '
+				print stringList[:len(stringList)]
+				
+				if messageText == 'EXIT' or messageText == 'exit' or messageText == 'Exit':
+				    print 'Closing...'
+					
+				    s.close()
+				    sys.exit()
+				else:
+					
+					# pkt2 is lost (not sent at all in this case)
+					if packetIndex == 2:
+						# print 'packetIndex == 2'
+						lossIndex = 2
+						lossBool = 1
+						packetIndex = packetIndex + 1
+						
+						continue
+					
+					print 'Sending Packet... '
+					messageText= '0 | ' + ip_checksum(messageText) + ' | ' + messageText + ' | ' + str(packetIndex)
+					s.sendto(messageText,(host, port))
+					
+					packetIndex = packetIndex + 1
+			
+			if flip == 0:
+				print 'Sleeping for three seconds...'
+				time.sleep(3)
+				flip = 1
+			
+			continue
+		
+		elif (x is s) and (vee < 4):
+			d=s.recvfrom(1024)
+			data=d[0]
+			addr=d[1]
+			if data[0:3] == 'ACK':
+				print 'ACK ' + data[3] + ' RECVD'
+				latestACK = data[3]
+				
+				
+				# print 'packetIndex ' + str(packetIndex) + ' lossIndex ' + str(lossIndex)
+				if (packetIndex != lossIndex):
+					# decrement counter if packet is successfully transmitted
+					vee = vee - 1
+				
+				
+			else:
+				print 'ERR'
+		continue
+sys.exit()
