@@ -61,7 +61,8 @@ while 1:
 			s.sendto('yes', addr)
 			break
 		else:
-			print 'Username and password do not match. '
+			print 'Username and password do not match'
+			print numAccounts
 			s.sendto('no', addr)
 	
 	#now keep talking with the client
@@ -96,12 +97,14 @@ while 1:
 				s.sendto('no', addr)
 				continue
 		
-		if data[0] == '2':
+		elif data[0] == '2':
 			print 'Logging out...'
 			x = 0
 			y = 0
 			break
 		
+		else:
+			break
 		reply = 'OK...' + data
 		
 		s.sendto(reply, addr)

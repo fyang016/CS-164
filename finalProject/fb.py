@@ -40,6 +40,7 @@ while 1:
 		print 'Logged in successfully.'
 		break
 	else:
+		print reply
 		print 'uname and pass do not match'
 
 
